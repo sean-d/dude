@@ -40,14 +40,23 @@ class MainScene extends Phaser.Scene {
   update() {
     if (!this.gamepad) return; // If no gamepad, exit update
 
-    // Get left stick movement
+    // Left Stick Movement
     const xAxis = this.gamepad.axes[0].getValue(); // Left stick X
     const yAxis = this.gamepad.axes[1].getValue(); // Left stick Y
 
-    // Adjust player position based on stick movement
-    const speed = 5; // Adjust speed if needed
+    const speed = 5;
     this.player.x += xAxis * speed;
     this.player.y += yAxis * speed;
+
+    // Right Stick Rotation
+    const rightX = this.gamepad.axes[2].getValue(); // Right stick X
+    const rightY = this.gamepad.axes[3].getValue(); // Right stick Y
+
+    if (Math.abs(rightX) > 0.1 || Math.abs(rightY) > 0.1) {
+      // Prevents jitter when stick is neutral
+      const angle = Math.atan2(rightY, rightX) * (180 / Math.PI); // Convert radians to degrees
+      this.player.setAngle(angle); // Set the player's facing direction
+    }
   }
 }
 
