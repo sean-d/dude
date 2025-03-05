@@ -1,151 +1,67 @@
-# Twin-Stick Shooter Setup Guide
+# Development Setup Guide
 
-## Decision: Using Vite Over Webpack
+## 📌 Prerequisites
 
-For this project, we have decided to use **Vite** instead of **Webpack** for the following reasons:
+Make sure you have the following installed:
 
-- **Faster Development**: Vite provides **instant updates** with Hot Module Replacement (HMR).
-- **Built-in TypeScript Support**: No need for extra loaders or configuration.
-- **Faster Build Times**: Optimized for **small, fast-loading games**.
-- **Simpler Configuration**: Less setup compared to Webpack.
+- **Node.js 20 LTS** → [Download](https://nodejs.org/en/download)
+- **npm 10+** (comes with Node.js)
+- **Git** ([Install Git](https://git-scm.com/downloads))
 
-Vite allows for a **more efficient development workflow** when integrating **Electron, Phaser, and TypeScript**.
+Check your versions:
 
----
-
-## Development Environment
-
-We will be using the following versions of **Node.js** and **npm**:
-
-- **Node.js:** v20 LTS (**Currently installed: 20.18.3**)
-- **npm:** v10 (**Currently installed: 10.8.2**)
-
-📌 **Note:** While the minor and patch versions may update over time, we will stick to **Node v20 LTS** and **npm v10** as our baseline.
-
----
-
-## **Project Initialization Steps**
-
-Follow these steps to set up the project:
-
-### **1. Create the Project Directory**
 ```sh
-mkdir twin-stick-shooter && cd twin-stick-shooter
+node -v  # Should return 20.x.x
+npm -v   # Should return 10.x.x
+git --version  # Should return a valid version
 ```
 
-### **2. Initialize npm**
+## run the project
+
 ```sh
-npm init -y
+git clone git@github.com:sean-d/dude.git
+cd dude
+npm install
+npm start
 ```
 
-### **3. Install Vite, Electron, and Phaser**
+✔ This will: 1. Start Vite (http://localhost:5173) 2. Wait for Vite to be ready 3. Launch Electron 4. Open the game window
+
+### If vite complains at your face about ports in use
+
+> Port 5173 is in use, trying another one...
+
+just get a new port for vite and then run electron
+
 ```sh
-npm install --save-dev vite electron electron-builder electron-packager typescript @types/node
-npm install phaser
+npm run dev
+npm run electron
 ```
 
-### **4. Configure TypeScript**
-Create a `tsconfig.json` file in the root directory:
-```json
-{
-  "compilerOptions": {
-    "target": "es6",
-    "module": "esnext",
-    "strict": true,
-    "outDir": "dist",
-    "rootDir": "src"
-  }
-}
+### if you get vite not found/electron shows a blank screen
+
+```sh
+rm -rf node_modules package-lock.json
+npm install
+npm start
 ```
 
-### **5. Set Up Electron Main Process**
-Create a `src/main.ts` file:
-```ts
-import { app, BrowserWindow } from 'electron';
+### if the app keeps reloading
 
-let mainWindow: BrowserWindow | null;
+1. Check which files are changing unexpectedly:
 
-app.on('ready', () => {
-  mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
-    webPreferences: { nodeIntegration: true }
-  });
-
-  mainWindow.loadFile('index.html');
-});
-
-app.on('window-all-closed', () => {
-  app.quit();
-});
+```sh
+ls -lt --full-time src/ index.html
 ```
 
-### **6. Set Up Phaser in Renderer Process**
-Create a `src/game.ts` file:
-```ts
-import Phaser from 'phaser';
+2. Add watch: ignored in vite.config.js:
 
-const config: Phaser.Types.Core.GameConfig = {
-  type: Phaser.AUTO,
-  width: 800,
-  height: 600,
-  scene: {
-    preload() {
-      this.load.image('logo', 'logo.png');
-    },
-    create() {
-      this.add.image(400, 300, 'logo');
+```sh
+export default {
+  server: {
+    watch: {
+      ignored: ['**/node_modules/**', '**/package-lock.json']
     }
   }
 };
-
-new Phaser.Game(config);
 ```
-
-### **7. Set Up HTML File**
-Create `index.html` in the root directory:
-```html
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Phaser + Electron</title>
-</head>
-<body>
-  <script src="./dist/game.js"></script>
-</body>
-</html>
-```
-
-### **8. Running the Project**
-#### **Set Up `npm start` for Easier Launch**
-Modify the `scripts` section of `package.json`:
-```json
-"scripts": {
-  "dev": "vite", 
-  "electron": "electron .",
-  "start": "vite & electron ."
-}
-```
-
-#### **To Start Development Mode**
-Run:
-```sh
-npm start
-```
-This will start both **Vite** and **Electron** in parallel.
-
-#### **To Build the Project for Production**
-```sh
-npm run build
-```
-
----
-
-## **Next Steps**
-- **Set up Vite for better Electron integration.**
-- **Configure Electron's renderer to properly work with Vite.**
-- **Ensure asset handling works correctly with Phaser.**
-
----
-
-This document will be updated as we refine our setup process.
