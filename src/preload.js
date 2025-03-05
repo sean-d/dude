@@ -8,10 +8,9 @@ class PreloadScene extends Phaser.Scene {
   preload() {
     console.log("Preloading assets...");
 
-    // Load player sprite
     this.load.image("player", "src/assets/player.png");
-
-    // You can load more assets here (backgrounds, enemy sprites, etc.)
+    this.load.image("bullet", "src/assets/bullet.png");
+    this.load.image("bullet", "src/assets/bullet.png");
   }
 
   create() {
